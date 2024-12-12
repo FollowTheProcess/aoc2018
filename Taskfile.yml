@@ -1,0 +1,65 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  default:
+    desc: List all available tasks
+    silent: true
+    cmds:
+      - task --list
+
+  tidy:
+    desc: Tidy dependencies in go.mod and go.sum
+    sources:
+      - "**/*.go"
+      - go.mod
+      - go.sum
+    cmds:
+      - go mod tidy
+
+  fmt:
+    desc: Run go fmt on all source files
+    sources:
+      - "**/*.go"
+    preconditions:
+      - sh: command -v golines
+        msg: golines not installed, see https://github.com/segmentio/golines
+    cmds:
+      - go fmt ./...
+      - golines . --ignore-generated --write-output
+
+  test:
+    desc: Run the test suite
+    sources:
+      - "**/*.go"
+    cmds:
+      - go test -race ./... {{ .CLI_ARGS }}
+
+  lint:
+    desc: Run the linters and auto-fix if possible
+    sources:
+      - "**/*.go"
+      - .golangci.yml
+    cmds:
+      - golangci-lint run --fix
+    preconditions:
+      - sh: command -v golangci-lint
+        msg: golangci-lint not installed, see https://golangci-lint.run/usage/install/#local-installation
+
+  check:
+    desc: Run tests and linting in one
+    cmds:
+      - task: test
+      - task: lint
+
+  sloc:
+    desc: Print lines of code
+    cmds:
+      - fd . -e go | xargs wc -l | sort -nr | head
+
+  update:
+    desc: Updates dependencies in go.mod and go.sum
+    cmds:
+      - go get -u ./...
+      - go mod tidy
