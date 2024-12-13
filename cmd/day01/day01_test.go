@@ -69,3 +69,40 @@ func TestCalculateFrequency(t *testing.T) {
 		})
 	}
 }
+
+func TestFirstRepeatFrequency(t *testing.T) {
+	tests := []struct {
+		input    string // Raw input
+		expected int    // The expected first repeat frequency
+	}{
+		{
+			input:    "+1\n-2\n+3\n+1",
+			expected: 2,
+		},
+		{
+			input:    "+1\n-1",
+			expected: 0,
+		},
+		{
+			input:    "+3\n+3\n+4\n-2\n-4",
+			expected: 10,
+		},
+		{
+			input:    "-6\n+3\n+8\n+5\n-6",
+			expected: 5,
+		},
+		{
+			input:    "+7\n+7\n-2\n-7\n-4",
+			expected: 14,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			got, err := firstRepeatFrequency(tt.input)
+			test.Ok(t, err)
+
+			test.Equal(t, got, tt.expected)
+		})
+	}
+}
