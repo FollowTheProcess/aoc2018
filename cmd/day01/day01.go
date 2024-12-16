@@ -86,7 +86,7 @@ var input string
 
 func main() {
 	if err := run(); err != nil {
-		msg.Error("%v", err)
+		msg.Err(err)
 		os.Exit(1)
 	}
 }
