@@ -90,6 +90,8 @@ type Claim struct {
 
 // parseClaim parses a Claim from text.
 func parseClaim(raw string) (Claim, error) {
+	// I literally wrote this parsing library for advent of code, glad
+	// it's coming in handy
 	values, rest, err := parser.Chain(
 		parser.Exact("#"),
 		parser.TakeWhile(unicode.IsDigit), // #<id>
@@ -117,6 +119,7 @@ func parseClaim(raw string) (Claim, error) {
 		return Claim{}, fmt.Errorf("wrong number of parsed values, expected 13, got %d", len(values))
 	}
 
+	// These must be valid integers if we got here so no need to check the err
 	fromLeft, _ := strconv.Atoi(values[5]) //nolint:errcheck
 	fromTop, _ := strconv.Atoi(values[7])  //nolint:errcheck
 	width, _ := strconv.Atoi(values[10])   //nolint:errcheck
