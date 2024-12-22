@@ -24,9 +24,12 @@ tasks:
       - "**/*.go"
     preconditions:
       - sh: command -v golines
-        msg: golines not installed, see https://github.com/segmentio/golines
+        msg: golines not installed, run `go install github.com/segmentio/golines@latest`
+
+      - sh: command -v gofumpt
+        msg: requires gofumpt, run `go install mvdan.cc/gofumpt@latest`
     cmds:
-      - go fmt ./...
+      - gofumpt -w -extra .
       - golines . --ignore-generated --write-output
 
   test:
@@ -34,18 +37,28 @@ tasks:
     sources:
       - "**/*.go"
     cmds:
-      - go test -race ./... {{ .CLI_ARGS }}
+      - go test -race -cover ./... {{ .CLI_ARGS }}
 
   lint:
     desc: Run the linters and auto-fix if possible
     sources:
       - "**/*.go"
       - .golangci.yml
-    cmds:
-      - golangci-lint run --fix
+    deps:
+      - fmt
     preconditions:
       - sh: command -v golangci-lint
         msg: golangci-lint not installed, see https://golangci-lint.run/usage/install/#local-installation
+
+      - sh: command -v betteralign
+        msg: requires betteralign, run `go install github.com/dkorunic/betteralign/cmd/betteralign@latest`
+
+      - sh: command -v typos
+        msg: requires typos-cli, run `brew install typos-cli`
+    cmds:
+      - betteralign -test_files -apply ./...
+      - golangci-lint run --fix
+      - typos
 
   check:
     desc: Run tests and linting in one
@@ -62,4 +75,4 @@ tasks:
     desc: Updates dependencies in go.mod and go.sum
     cmds:
       - go get -u ./...
-      - go mod tidy
+      - go mody tidy

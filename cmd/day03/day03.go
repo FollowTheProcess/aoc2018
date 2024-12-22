@@ -116,7 +116,10 @@ func parseClaim(raw string) (Claim, error) {
 	}
 
 	if len(values) != 13 { //nolint:mnd
-		return Claim{}, fmt.Errorf("wrong number of parsed values, expected 13, got %d", len(values))
+		return Claim{}, fmt.Errorf(
+			"wrong number of parsed values, expected 13, got %d",
+			len(values),
+		)
 	}
 
 	// These must be valid integers if we got here so no need to check the err
